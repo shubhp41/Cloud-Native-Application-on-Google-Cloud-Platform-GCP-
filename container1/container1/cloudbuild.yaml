@@ -1,0 +1,35 @@
+steps:
+  # Authenticate Docker to Google Cloud
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - 'gcloud auth configure-docker --quiet'
+  # Build Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/kubernativesmain/container1/image1:$SHORT_SHA'
+      - '.'
+  # Push Docker image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'us-central1-docker.pkg.dev/kubernativesmain/container1/image1:$SHORT_SHA'
+  # Step 1: Deploy Container 1
+  - name: 'gcr.io/cloud-builders/kubectl'
+    env:
+      - 'CLOUDSDK_COMPUTE_REGION=us-central1'
+      - 'CLOUDSDK_COMPUTE_ZONE=us-central1'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=my-cluster'
+    args:
+      - set
+      - image
+      - deployment/container1-deployment
+      - container1=us-central1-docker.pkg.dev/kubernativesmain/container1/image1:$SHORT_SHA
+
+images:
+  - 'us-central1-docker.pkg.dev/kubernativesmain/container1/image1'
+
+

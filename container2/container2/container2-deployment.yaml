@@ -1,0 +1,27 @@
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: container2-deployment
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: container2
+#   template:
+#     metadata:
+#       labels:
+#         app: container2
+#     spec:
+#       containers:
+#         - name: container2
+#           image: gcr.io/kubernativesmain/container2:v1
+#           ports:
+#             - containerPort: 7000
+#           volumeMounts:
+#             - name: pv-storage
+#               mountPath: /shubh_PV_dir
+#       volumes:
+#         - name: pv-storage
+#           persistentVolumeClaim:
+#             claimName: pv-claim
